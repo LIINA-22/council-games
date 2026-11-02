@@ -66,7 +66,7 @@ const PUZZLES = [
 // غيّر الرقم في آخر الاسم إذا تبي كل الأجهزة تبدأ من الصفر (تنمسح التجارب القديمة)
 const KEY = "council-games-v2";
 try { ["council-games-v1", "council-booth-v1"].forEach((k) => localStorage.removeItem(k)); } catch (_) {}
-const blank = () => ({ decoded: 0, decodeTries: 0, bugReports: 0, votes: {}, hackStarts: 0, hackWins: 0, fame: [] });
+const blank = () => ({ decoded: 0, decodeTries: 0, bugReports: 0, votes: {}, hackStarts: 0, hackWins: 0, fame: [], typeScores: [] });
 let db;
 try { db = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (_) { db = blank(); }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (_) {} };
@@ -76,14 +76,14 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 const shuffle = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 // ===== التنقل بين الشاشات =====
-const SCREENS = ["home", "decode", "bug", "hack", "fame", "staff"];
+const SCREENS = ["home", "decode", "bug", "hack", "type", "fame", "staff"];
 let current = "home";
 function go(name) {
   stopTimer();
   SCREENS.forEach((s) => ($("s-" + s).hidden = s !== name));
   $("home-btn").hidden = name === "home";
   current = name;
-  ({ home: initHome, decode: initDecode, bug: initBug, hack: initHack, fame: renderFame, staff: renderStaff })[name]();
+  ({ home: initHome, decode: initDecode, bug: initBug, hack: initHack, type: initType, fame: renderFame, staff: renderStaff })[name]();
   window.scrollTo(0, 0);
 }
 document.addEventListener("click", (e) => {
@@ -93,7 +93,7 @@ document.addEventListener("click", (e) => {
 
 // يرجع للرئيسية تلقائيًا إذا ما لمس أحد الجهاز دقيقة ونص
 let idle;
-const resetIdle = () => { clearTimeout(idle); idle = setTimeout(() => { if (current !== "home" && current !== "staff" && !hackRunning) go("home"); }, 90000); };
+const resetIdle = () => { clearTimeout(idle); idle = setTimeout(() => { if (current !== "home" && current !== "staff" && !hackRunning && !typeRunning) go("home"); }, 90000); };
 ["click", "keydown", "mousemove", "touchstart"].forEach((ev) => document.addEventListener(ev, resetIdle, { passive: true }));
 
 $("fs-btn").addEventListener("click", () => {
@@ -101,7 +101,7 @@ $("fs-btn").addEventListener("click", () => {
 });
 
 // ===== الرئيسية =====
-const BOOT = ["> booting Council.exe ...", "> loading modules: decode · bug · hack", "> status: <span>ONLINE ✓</span>"];
+const BOOT = ["> booting Council.exe ...", "> loading modules: decode · bug · hack · type", "> status: <span>ONLINE ✓</span>"];
 let bootTimer;
 function initHome() {
   clearTimeout(bootTimer);
@@ -256,7 +256,7 @@ function tick() {
   t.classList.toggle("low", timeLeft <= 15);
   if (timeLeft === 0) lose("خلص الوقت ⏱️");
 }
-function stopTimer() { clearInterval(timer); hackRunning = false; }
+function stopTimer() { clearInterval(timer); hackRunning = false; clearInterval(typeTimer); typeRunning = false; }
 function tryCode() {
   if (!hackRunning) return;
   if (digits.join("") === puzzle.code) {
@@ -320,6 +320,107 @@ $("fame-form").addEventListener("submit", (e) => {
   go("fame");
 });
 
+// ===== Speed Type =====
+// جمل قصيرة عن شغل المجلس، والطالب يكتبها خلال ٢٥ ثانية
+const SENTENCES = [
+  "اعتماد خطة الفعاليات التطوعية للشهر القادم بنجاح",
+  "رفع محضر الاجتماع الدوري لأعضاء المجلس الطلابي",
+  "مراجعة تقارير الساعات التطوعية لجميع طلاب الكلية",
+  "تدقيق سجلات الحضور لاجتماعات المجلس الرسمية",
+  "إصدار التقرير الختامي لأنشطة الفصل الدراسي",
+  "توثيق التوصيات الصادرة عن اجتماع المجلس",
+  "رفع إحصاءات المشاركة المجتمعية لعمادة شؤون الطلاب",
+  "متابعة تنفيذ قرارات المجلس الطلابي بخصوص المبادرات",
+  "اعتماد جدول أعمال الاجتماع القادم للمجلس",
+  "أرشفة التقارير الإدارية الخاصة بلجان الكلية",
+];
+const TYPE_TIME = 25;
+let typeRunning = false, typeTimer, typeStart, typeName, typeWords, typeCorrect, typeTotal, typeSentence, typeLastIdx = -1;
+const sortTypeScores = () => [...db.typeScores].sort((a, b) => b.words - a.words || b.acc - a.acc);
+function renderTypeBoard(highlight) {
+  const list = sortTypeScores().slice(0, 10);
+  $("type-board").innerHTML = list.length
+    ? list.map((s) => `<li class="${s === highlight ? "me" : ""}"><span>${esc(s.name)}</span><span class="tm">${s.words}</span><span class="acc">${s.acc}%</span></li>`).join("")
+    : '<li style="display:block" class="empty">كن أول واحد في اللوحة ⚡</li>';
+}
+function initType() {
+  typeRunning = false;
+  $("type-setup").hidden = false; $("type-play").hidden = true; $("type-result").hidden = true;
+  $("type-name").value = "";
+  renderTypeBoard();
+  setTimeout(() => $("type-name").focus(), 50);
+}
+function nextSentence() {
+  let i; do { i = Math.floor(Math.random() * SENTENCES.length); } while (i === typeLastIdx && SENTENCES.length > 1);
+  typeLastIdx = i; typeSentence = SENTENCES[i];
+  $("type-text").innerHTML = [...typeSentence].map((c) => `<span>${esc(c)}</span>`).join("");
+  $("type-input").value = "";
+}
+// يحسب الكلمات الصحيحة في الجملة: الكلمة تنحسب إذا كل حروفها انكتبت صح
+function scoreSentence(typed) {
+  const words = typeSentence.split(" "), got = typed.trim().split(/\s+/);
+  return words.filter((w, i) => got[i] === w).length;
+}
+$("type-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  typeName = $("type-name").value.trim().slice(0, 20) || "Anonymous";
+  typeWords = 0; typeCorrect = 0; typeTotal = 0; typeStart = null;
+  $("type-time").textContent = TYPE_TIME + "s"; $("type-time").classList.remove("low");
+  $("type-score").textContent = "0 words";
+  $("type-setup").hidden = true; $("type-play").hidden = false;
+  nextSentence();
+  $("type-input").disabled = false;
+  setTimeout(() => $("type-input").focus(), 50);
+});
+$("type-input").addEventListener("input", () => {
+  const v = $("type-input").value;
+  if (!typeStart && v.length) {
+    typeStart = Date.now(); typeRunning = true;
+    typeTimer = setInterval(() => {
+      const left = Math.max(0, TYPE_TIME - Math.floor((Date.now() - typeStart) / 1000));
+      $("type-time").textContent = left + "s";
+      $("type-time").classList.toggle("low", left <= 5);
+      if (left === 0) endType();
+    }, 200);
+  }
+  const spans = $("type-text").children;
+  [...spans].forEach((sp, i) => {
+    sp.className = i >= v.length ? "" : v[i] === typeSentence[i] ? "ok" : "bad";
+  });
+  if (v.length >= typeSentence.length) finishSentence(v);
+});
+function finishSentence(v) {
+  typeWords += scoreSentence(v);
+  typeTotal += v.length;
+  typeCorrect += [...v].filter((c, i) => c === typeSentence[i]).length;
+  $("type-score").textContent = typeWords + " words";
+  nextSentence();
+}
+function endType() {
+  if (!typeRunning) return;
+  clearInterval(typeTimer); typeRunning = false;
+  const v = $("type-input").value;
+  if (v.length) { // الجملة اللي ما خلصت: نحسب كلماتها الكاملة الصحيحة بس
+    const done = v.endsWith(" ") ? v : v.slice(0, v.lastIndexOf(" ") + 1);
+    typeWords += scoreSentence(done);
+    typeTotal += v.length;
+    typeCorrect += [...v].filter((c, i) => c === typeSentence[i]).length;
+  }
+  $("type-input").disabled = true;
+  const acc = typeTotal ? Math.round((typeCorrect / typeTotal) * 100) : 0;
+  const entry = { name: typeName, words: typeWords, acc, at: new Date().toISOString() };
+  db.typeScores.push(entry); save();
+  const rank = sortTypeScores().indexOf(entry) + 1;
+  $("type-res-name").textContent = typeName;
+  $("type-res-words").textContent = typeWords;
+  $("type-res-acc").textContent = acc + "%";
+  $("type-res-rank").textContent = rank <= 10 ? `🎉 ترتيبك رقم ${rank} في اللوحة!` : "قربت! جرّب مرة ثانية وادخل اللوحة 💪";
+  $("type-play").hidden = true; $("type-result").hidden = false;
+  renderTypeBoard(entry);
+  if (rank <= 3) confetti(true);
+}
+$("type-again").addEventListener("click", initType);
+
 // ===== لوحة الأبطال =====
 function renderFame() {
   const list = db.fame.map((f, i) => ({ ...f, i })).sort((a, b) => a.secs - b.secs).slice(0, 10);
@@ -339,6 +440,7 @@ function renderStaff() {
   const rate = db.hackStarts ? Math.round((db.hackWins / db.hackStarts) * 100) : 0;
   $("stats").innerHTML = [
     [db.decoded, "شفرات انفكّت"], [db.bugReports, "تقارير Bugs"], [db.hackWins, "صناديق انفتحت"], [rate + "%", `نسبة نجاح Hack (${db.hackStarts} محاولة)`],
+    [db.typeScores.length, "محاولات Speed Type"], [db.typeScores.length ? sortTypeScores()[0].words : 0, "أعلى كلمات في Speed Type"],
   ].map(([n, l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
   $("staff-bugs").innerHTML = topBugsHtml(BUGS.length);
 }
@@ -348,7 +450,8 @@ $("export").addEventListener("click", () => {
     ["عام", "شفرات انفكّت", db.decoded], ["عام", "محاولات فك", db.decodeTries], ["عام", "تقارير Bugs", db.bugReports],
     ["عام", "محاولات Hack", db.hackStarts], ["عام", "صناديق انفتحت", db.hackWins],
     ...BUGS.map((b) => ["تصويت Bugs", b.txt, db.votes[b.id] || 0]),
-    ...[...db.fame].sort((a, b) => a.secs - b.secs).map((f) => ["Hall of Fame", f.name, f.secs + "s"])];
+    ...[...db.fame].sort((a, b) => a.secs - b.secs).map((f) => ["Hall of Fame", f.name, f.secs + "s"]),
+    ...sortTypeScores().map((s) => ["Speed Type", s.name, `${s.words} كلمة · ${s.acc}%`])];
   const csv = "﻿" + rows.map((r) => r.map(q).join(",")).join("\r\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));

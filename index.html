@@ -29,7 +29,7 @@
   <section class="screen" id="s-home">
     <div class="boot" id="boot"></div>
     <h1 class="home-title"><span class="mono">Council.exe</span><br>مستعد تختبر نفسك؟</h1>
-    <p class="home-sub">ثلاث مهمات. ابدأ بالترتيب، واللي يخلصها كلها له جائزة 🎁</p>
+    <p class="home-sub">أربع مهمات. ابدأ بالترتيب، واللي يخلصها كلها له جائزة 🎁</p>
     <div class="games">
       <button class="game" data-go="decode">
         <span class="step">01</span>
@@ -50,6 +50,13 @@
         <span class="ico">💻</span>
         <h2>Hack the Box</h2>
         <p>حل ٣ ألغاز، اجمع الرقم السري، وافتح الصندوق قبل ما يخلص الوقت.</p>
+        <span class="go">ابدأ ←</span>
+      </button>
+      <button class="game" data-go="type">
+        <span class="step">04</span>
+        <span class="ico">⌨️</span>
+        <h2>Speed Type</h2>
+        <p>اكتب أكبر عدد من الكلمات صح خلال ٢٥ ثانية، وتصدّر اللوحة.</p>
         <span class="go">ابدأ ←</span>
       </button>
     </div>
@@ -158,6 +165,40 @@
       <div class="big bad">ACCESS DENIED ✕</div>
       <p id="lose-msg"></p>
       <div class="btn-row"><button class="btn" id="hack-retry">حاول مرة ثانية</button><button class="btn btn-ghost" data-go="home">الرئيسية</button></div>
+    </div>
+  </section>
+
+  <!-- Speed Type -->
+  <section class="screen" id="s-type" hidden>
+    <div class="head">
+      <div><h1>Speed Type ⌨️</h1><p>اكتب الجملة اللي تطلع لك بأسرع ما تقدر. كل كلمة صح = نقطة.</p></div>
+    </div>
+    <div class="type-grid">
+      <div class="panel">
+        <div id="type-setup">
+          <p style="font-size:1.2rem;margin-bottom:12px">عندك <b>٢٥ ثانية</b>. الوقت يبدأ مع أول حرف تكتبه.</p>
+          <form class="name-row" id="type-form" autocomplete="off" style="justify-content:flex-start">
+            <input id="type-name" maxlength="20" placeholder="اكتب اسمك" aria-label="اسمك">
+            <button class="btn" type="submit">ابدأ التحدي 🚀</button>
+          </form>
+        </div>
+        <div id="type-play" hidden>
+          <div class="status-row"><span class="t" id="type-time">25s</span><span id="type-score">0 words</span></div>
+          <div class="type-text" id="type-text"></div>
+          <input class="type-input" id="type-input" autocomplete="off" spellcheck="false" placeholder="ابدأ الكتابة هنا..." aria-label="اكتب الجملة">
+          <p class="muted" style="color:var(--muted);margin-top:8px;font-size:.95rem">لما تخلص الجملة، تطلع لك جملة جديدة تلقائيًا.</p>
+        </div>
+        <div class="result" id="type-result" hidden>
+          <div class="big ok">TIME'S UP ⏱️</div>
+          <p><b id="type-res-name"></b>، كتبت <b class="mono" id="type-res-words"></b> كلمة صح، ودقتك <b class="mono" id="type-res-acc"></b></p>
+          <p id="type-res-rank" style="color:var(--warn);font-weight:800"></p>
+          <div class="btn-row"><button class="btn" id="type-again">تحدّي جديد</button><button class="btn btn-ghost" data-go="home">الرئيسية</button></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 style="font-size:1.3rem;margin-bottom:12px">🏆 أسرع الكتّاب</h2>
+        <ol class="fame" id="type-board"></ol>
+      </div>
     </div>
   </section>
 

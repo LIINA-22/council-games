@@ -69,6 +69,7 @@ try { ["council-games-v1", "council-booth-v1"].forEach((k) => localStorage.remov
 const blank = () => ({ decoded: 0, decodeTries: 0, bugReports: 0, votes: {}, hackStarts: 0, hackWins: 0, fame: [], typeScores: [] });
 let db;
 try { db = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (_) { db = blank(); }
+if (Array.isArray(db.typeScores)) db.typeScores = db.typeScores.filter((t) => t.words > 0);
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (_) {} };
 
 const $ = (id) => document.getElementById(id);
@@ -422,12 +423,19 @@ function endType() {
   }
   $("type-input").disabled = true;
   const acc = typeTotal ? Math.round((typeCorrect / typeTotal) * 100) : 0;
-  const entry = { name: typeName, words: typeWords, acc, at: new Date().toISOString() };
-  db.typeScores.push(entry); save();
-  const rank = sortTypeScores().indexOf(entry) + 1;
   $("type-res-name").textContent = typeName;
   $("type-res-words").textContent = typeWords;
   $("type-res-acc").textContent = acc + "%";
+  // اللي ما كتب ولا كلمة صح ما يدخل اللوحة
+  if (!typeTotal || !typeWords) {
+    $("type-res-rank").textContent = typeTotal ? "ولا كلمة صح هالمرة 😅 جرّب مرة ثانية!" : "ما كتبت شي! جرّب مرة ثانية ⌨️";
+    $("type-play").hidden = true; $("type-result").hidden = false;
+    renderTypeBoard();
+    return;
+  }
+  const entry = { name: typeName, words: typeWords, acc, at: new Date().toISOString() };
+  db.typeScores.push(entry); save();
+  const rank = sortTypeScores().indexOf(entry) + 1;
   $("type-res-rank").textContent = rank <= 10 ? `🎉 ترتيبك رقم ${rank} في اللوحة!` : "قربت! جرّب مرة ثانية وادخل اللوحة 💪";
   $("type-play").hidden = true; $("type-result").hidden = false;
   renderTypeBoard(entry);

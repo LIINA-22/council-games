@@ -61,7 +61,7 @@ const PUZZLES = [
 ];
 
 // ===== التخزين على هذا الجهاز =====
-const KEY = "council-booth-v1";
+const KEY = "council-games-v1";
 const blank = () => ({ decoded: 0, decodeTries: 0, bugReports: 0, votes: {}, hackStarts: 0, hackWins: 0, fame: [] });
 let db;
 try { db = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (_) { db = blank(); }
@@ -346,7 +346,7 @@ $("export").addEventListener("click", () => {
   const csv = "﻿" + rows.map((r) => r.map(q).join(",")).join("\r\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-  a.download = `council-booth-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `council-games-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
 });
 $("reset").addEventListener("click", () => {

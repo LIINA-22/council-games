@@ -1,13 +1,18 @@
-/* Council.exe — ألعاب المجلس الطلابي التفاعلية، بثيم موقع المجلس */
+/* Council.exe — ألعاب المجلس الطلابي التفاعلية، بثيم Arcade */
 :root {
-  --bg: #0f1623; --bg-alt: #141d2c; --card: #1a2538; --card-2: #1f2c43; --border: #26354d;
-  --text: #e6edf6; --muted: #9aaabf; --accent: #5fb3e4; --accent-2: #4a9fd4; --on-accent: #141d2c;
-  --ok: #22c55e; --bad: #ef4444; --warn: #f5b942;
+  /* ثيم Arcade: بنفسجي غامق مع أصفر، وخلفية مربعات */
+  --bg: #1b1036; --bg-alt: #22144a; --card: #2a1b54; --card-2: #33226a; --border: #4b3592;
+  --text: #fff7e6; --muted: #c5b8ea; --accent: #ffcc00; --accent-2: #ffb300; --on-accent: #1b1036;
+  --ok: #4dff88; --bad: #ff4d6d; --warn: #ffcc00;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace;
-  --well: #0b111c; --code: #9fe3ff; --glow: rgb(95 179 228 / .35); --soft: rgb(95 179 228 / .1);
-  --top-bg: rgb(20 29 44 / .85);
-  --bg-art: radial-gradient(circle at 15% 20%, rgb(95 179 228 / .12), transparent 45%), radial-gradient(circle at 85% 90%, rgb(95 179 228 / .08), transparent 40%);
-  --radius-lg: 22px;
+  --well: #140b2a; --code: #7ef9ff; --glow: rgb(255 204 0 / .45); --soft: rgb(255 204 0 / .12);
+  --top-bg: rgb(27 16 54 / .92);
+  --bg-art:
+    linear-gradient(rgb(255 255 255 / .04) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgb(255 255 255 / .04) 1px, transparent 1px) 0 0 / 40px 40px,
+    radial-gradient(circle at 50% 120%, rgb(255 77 166 / .35), transparent 55%);
+  --shadow-hard: #0e0820;
+  --radius-lg: 14px;
   color-scheme: dark;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,6 +20,7 @@ html, body { height: 100%; }
 body {
   font-family: "Tajawal", "Segoe UI", Tahoma, system-ui, sans-serif;
   background: var(--bg-art), var(--bg);
+  background-attachment: fixed;
   color: var(--text); line-height: 1.7; overflow-x: hidden;
 }
 button { font: inherit; cursor: pointer; }
@@ -195,3 +201,12 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 28px 48px; }
   .top-bugs li { grid-template-columns: minmax(0, 1fr) 100px auto; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* لمسة الأركيد: إطار سميك وظل صلب تحت البطاقات والأزرار */
+.game { border-width: 3px; box-shadow: 6px 6px 0 var(--shadow-hard); }
+.game:hover, .game:focus-visible { box-shadow: 8px 10px 0 var(--shadow-hard); }
+.btn { box-shadow: 4px 4px 0 var(--shadow-hard); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow-hard); }
+.btn-ghost { box-shadow: none; }
+.panel { box-shadow: 6px 6px 0 var(--shadow-hard); }
+.home-title .mono { text-shadow: 3px 3px 0 #ff4da6; }

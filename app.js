@@ -23,14 +23,15 @@ const CARDS = [
 ];
 
 const BUGS = [
-  { id: "parking", ico: "🚗", code: "Error 404", txt: "موقف سيارات not found" },
-  { id: "schedule", ico: "📅", code: "Warning: Conflict", warn: true, txt: "تعارض في الجدول بين محاضرتين" },
-  { id: "email", ico: "📧", code: "Timeout", warn: true, txt: "الرد على الإيميلات ياخذ وقت طويل" },
-  { id: "printer", ico: "🖨️", code: "Error 503", txt: "الطابعة out of service" },
+  { id: "study", ico: "📚", code: "Error 404", txt: "ما ألقى مكان أذاكر فيه بالكلية" },
+  { id: "labs-pc", ico: "💻", code: "Error 503", txt: "أجهزة المعامل بطيئة أو خربانة" },
   { id: "power", ico: "🔌", code: "Low Battery", warn: true, txt: "ما فيه أفياش كافية في القاعات" },
   { id: "who", ico: "❓", code: "NullPointerException", txt: "ما أعرف لمين أرجع في مشكلتي" },
-  { id: "labs", ico: "🔒", code: "403 Access Denied", txt: "المعامل مقفلة وقت الفراغ" },
   { id: "wifi", ico: "📶", code: "Lag Detected", warn: true, txt: "الواي فاي بطيء" },
+  { id: "labs", ico: "🔒", code: "403 Access Denied", txt: "المعامل مقفلة وقت الفراغ" },
+  { id: "workshops", ico: "🧩", code: "Missing Dependency", warn: true, txt: "ما فيه ورش أو دورات تساعدني في المواد الصعبة" },
+  { id: "events", ico: "📢", code: "Connection Lost", warn: true, txt: "ما أعرف عن فعاليات الكلية إلا متأخر" },
+  { id: "stress", ico: "🧠", code: "Out of Memory", txt: "ضغط دراسي ومحتاج دعم نفسي أو إرشاد" },
 ];
 
 // ألغاز سهلة جدًا: حساب بسيط، وعد حروف، وأسئلة عامة. كل مجموعة تعطي رقم سري من ٣ خانات

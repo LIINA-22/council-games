@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ألعاب بوث المجلس الطلابي لكلية علوم الحاسب وتقنية المعلومات: Decode the Council و Bug in the System و Hack the Box.">
+<link rel="icon" href="assets/logo-white.png">
+<title>Council.exe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand" id="brand" title="المجلس الطلابي">
+    <img src="assets/logo-white.png" alt="شعار المجلس الطلابي">
+    <span><strong>المجلس الطلابي</strong><small>كلية علوم الحاسب وتقنية المعلومات</small></span>
+  </div>
+  <div class="top-actions">
+    <button class="chip-btn" data-go="fame">🏆 Hall of Fame</button>
+    <button class="chip-btn" data-go="home" id="home-btn" hidden>⟵ الرئيسية</button>
+    <button class="chip-btn" id="fs-btn" title="ملء الشاشة">⛶</button>
+  </div>
+</header>
+
+<main>
+  <!-- الرئيسية -->
+  <section class="screen" id="s-home">
+    <div class="boot" id="boot"></div>
+    <h1 class="home-title"><span class="mono">Council.exe</span><br>مستعد تختبر نفسك؟</h1>
+    <p class="home-sub">ثلاث مهمات. ابدأ بالترتيب، واللي يخلصها كلها له جائزة 🎁</p>
+    <div class="games">
+      <button class="game" data-go="decode">
+        <span class="step">01</span>
+        <span class="ico">🔐</span>
+        <h2>Decode the Council</h2>
+        <p>فك الشفرة، واكتشف مين ورا المجلس الطلابي.</p>
+        <span class="go">ابدأ ←</span>
+      </button>
+      <button class="game" data-go="bug">
+        <span class="step">02</span>
+        <span class="ico">🐞</span>
+        <h2>Bug in the System</h2>
+        <p>وش أكثر «Bug» يزعجك في الكلية؟ صوّت، وبلّغنا عن مشكلتك.</p>
+        <span class="go">ابدأ ←</span>
+      </button>
+      <button class="game" data-go="hack">
+        <span class="step">03</span>
+        <span class="ico">💻</span>
+        <h2>Hack the Box</h2>
+        <p>حل ٣ ألغاز، اجمع الرقم السري، وافتح الصندوق قبل ما يخلص الوقت.</p>
+        <span class="go">ابدأ ←</span>
+      </button>
+    </div>
+    <div class="home-foot" id="home-foot"></div>
+  </section>
+
+  <!-- Decode the Council -->
+  <section class="screen" id="s-decode" hidden>
+    <div class="head">
+      <div><h1>Decode the Council 🔐</h1><p>فك الرسالة المشفرة واكتب الكلمة بالإنجليزي.</p></div>
+      <button class="chip-btn" id="dec-skip">🔄 شفرة ثانية</button>
+    </div>
+    <div class="decode-grid" id="dec-play">
+      <div class="panel">
+        <div class="cipher-label">الرسالة المشفرة:</div>
+        <div class="cipher" id="dec-cipher"></div>
+        <div class="hint">💡 <span>طريقة التشفير: <b id="dec-method"></b> · <span id="dec-hint"></span></span></div>
+        <form class="answer-row" id="dec-form" autocomplete="off">
+          <input id="dec-input" maxlength="16" placeholder="ANSWER" aria-label="الجواب">
+          <button class="btn" type="submit">تحقق</button>
+        </form>
+        <div class="feedback" id="dec-feedback" role="status"></div>
+      </div>
+      <div class="panel keybox">
+        <h3>🗝️ مفتاح فك التشفير</h3>
+        <div id="dec-key"></div>
+      </div>
+    </div>
+    <div class="panel reveal" id="dec-reveal" hidden>
+      <div>ACCESS GRANTED ✓</div>
+      <div class="word mono" id="rev-word"></div>
+      <div class="role" id="rev-role"></div>
+      <p id="rev-desc"></p>
+      <p class="who" id="rev-who"></p>
+      <p class="tip">الخطوة الجاية: <span class="mono">Bug in the System</span> 🐞</p>
+      <div class="btn-row">
+        <button class="btn" data-go="bug">المهمة ٢ ←</button>
+        <button class="btn btn-ghost" id="dec-again">شفرة ثانية</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bug in the System -->
+  <section class="screen" id="s-bug" hidden>
+    <div class="head">
+      <div><h1>Bug in the System 🐞</h1><p>اختر <b>٣</b> «Bugs» تزعجك أكثر شيء في الكلية.</p></div>
+    </div>
+    <div id="bug-play">
+      <div class="bugs" id="bugs"></div>
+      <div class="bug-bar">
+        <div class="picked">اخترت <b id="bug-count">0</b> / 3</div>
+        <button class="btn" id="bug-submit" disabled>أرسل التقرير ←</button>
+      </div>
+    </div>
+    <div class="panel" id="bug-report" hidden>
+      <div class="report">
+        <div>
+          <h2 style="font-size:1.8rem">✓ وصل تقريرك!</h2>
+          <p class="muted" style="color:var(--muted)">هذي أكثر الـ Bugs اللي صوّت عليها الطلاب لين الحين:</p>
+          <ul class="top-bugs" id="top-bugs"></ul>
+          <h3 style="margin-top:24px;font-size:1.4rem">عندك Bug ما هو موجود هنا؟ 👀</h3>
+          <p style="font-size:1.15rem">امسح الكود وبلّغ عنه في <b>«صوتك مسموع!»</b>، والمجلس يتابعه مع الجهة المختصة.</p>
+        </div>
+        <div>
+          <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" class="segno"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#141d2c" d="M2 2.5h7m3 0h4m1 0h2m1 0h2m1 0h1m1 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m1 0h5m1 0h2m5 0h2m1 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m3 0h1m5 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h3m1 0h1m2 0h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h3m1 0h2m4 0h3m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m2 0h1m1 0h4m2 0h3m1 0h2m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-24 1h1m3 0h1m1 0h3m4 0h2m-23 1h3m1 0h2m6 0h1m1 0h1m1 0h2m2 0h3m6 0h2m-32 1h1m1 0h1m2 0h1m3 0h1m1 0h2m2 0h1m1 0h5m1 0h1m2 0h2m1 0h2m1 0h1m-32 1h6m2 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h1m2 0h4m1 0h2m-32 1h3m5 0h2m4 0h1m1 0h1m2 0h1m1 0h1m1 0h1m2 0h1m1 0h1m1 0h1m-32 1h1m2 0h6m1 0h2m1 0h3m3 0h1m2 0h1m1 0h2m1 0h3m1 0h1m-32 1h4m1 0h1m2 0h1m2 0h2m1 0h3m2 0h1m1 0h1m2 0h2m1 0h1m2 0h2m-32 1h1m1 0h3m1 0h1m1 0h1m5 0h4m1 0h2m3 0h1m1 0h1m-27 1h1m1 0h1m1 0h2m4 0h1m1 0h1m1 0h1m1 0h1m3 0h7m1 0h3m-30 1h1m1 0h1m1 0h2m2 0h2m2 0h1m2 0h1m2 0h8m1 0h3m-28 1h2m2 0h1m2 0h2m2 0h1m1 0h2m2 0h1m1 0h3m1 0h1m1 0h2m2 0h1m-32 1h4m1 0h1m1 0h2m1 0h1m2 0h2m1 0h1m2 0h3m4 0h2m1 0h2m-32 1h3m2 0h1m1 0h1m1 0h2m3 0h1m1 0h1m5 0h1m1 0h1m1 0h1m1 0h1m2 0h2m-32 1h1m4 0h3m2 0h1m1 0h2m1 0h1m1 0h1m2 0h2m1 0h1m4 0h2m-31 1h2m1 0h2m5 0h3m1 0h1m3 0h3m2 0h1m1 0h3m4 0h1m-31 1h1m2 0h2m1 0h1m1 0h1m4 0h1m1 0h2m1 0h1m1 0h3m1 0h2m3 0h2m-32 1h1m5 0h3m1 0h1m2 0h3m2 0h2m2 0h2m1 0h1m2 0h1m1 0h1m-32 1h1m1 0h3m1 0h5m1 0h3m1 0h2m4 0h7m2 0h2m-25 1h2m1 0h2m2 0h1m2 0h2m1 0h1m2 0h1m3 0h2m-30 1h7m2 0h1m1 0h1m1 0h2m1 0h2m1 0h3m1 0h2m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h1m3 0h2m2 0h4m1 0h1m1 0h2m3 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h3m1 0h1m2 0h8m1 0h2m-32 1h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h4m1 0h1m1 0h2m3 0h1m1 0h1m1 0h2m-33 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m6 0h1m2 0h1m1 0h2m-28 1h1m5 0h1m1 0h2m1 0h2m5 0h1m1 0h1m1 0h3m1 0h3m3 0h1m-33 1h7m6 0h2m2 0h2m1 0h2m3 0h1m2 0h3"/></svg>
+</div>
+          <div class="qr-cap">sawtak-masmoo.netlify.app</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" data-go="hack">المهمة ٣: Hack the Box ←</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hack the Box -->
+  <section class="screen" id="s-hack" hidden>
+    <div class="head">
+      <div><h1>Hack the Box 💻</h1><p>كل لغز يعطيك رقم. رتّبها وافتح القفل.</p></div>
+    </div>
+    <div id="hack-intro" class="panel" style="text-align:center">
+      <p style="font-size:1.3rem">عندك <b>دقيقتين</b> و<b>٣ محاولات</b> بس.</p>
+      <p style="color:var(--muted)">الوقت يبدأ أول ما تضغط الزر.</p>
+      <div class="btn-row"><button class="btn" id="hack-start">ابدأ الاختراق ▶</button></div>
+    </div>
+    <div class="hack-grid" id="hack-play" hidden>
+      <div class="panel" id="clues"></div>
+      <div class="panel lock">
+        <div class="status-row"><span class="t" id="hack-time">02:00</span><span class="lives" id="hack-lives">♥♥♥</span></div>
+        <div class="wheels" id="wheels"></div>
+        <p style="color:var(--muted);font-size:.9rem">تقدر تكتب الأرقام من الكيبورد مباشرة</p>
+        <div class="btn-row" style="margin-top:14px"><button class="btn" id="hack-try">🔓 افتح</button></div>
+        <div class="lock-msg" id="hack-msg" role="status"></div>
+      </div>
+    </div>
+    <div class="panel result" id="hack-win" hidden>
+      <div class="big ok">ACCESS GRANTED 🎉</div>
+      <p>فتحت الصندوق في <b class="mono" id="win-time"></b> ثانية!</p>
+      <p style="color:var(--warn);font-weight:800">قل لأحد من الفريق ياخذ لك الجائزة 🎁</p>
+      <form class="name-row" id="fame-form" autocomplete="off">
+        <input id="fame-name" maxlength="20" placeholder="اكتب اسمك للوحة الأبطال" aria-label="اسمك">
+        <button class="btn" type="submit">سجّل اسمي 🏆</button>
+      </form>
+    </div>
+    <div class="panel result" id="hack-lose" hidden>
+      <div class="big bad">ACCESS DENIED ✕</div>
+      <p id="lose-msg"></p>
+      <div class="btn-row"><button class="btn" id="hack-retry">حاول مرة ثانية</button><button class="btn btn-ghost" data-go="home">الرئيسية</button></div>
+    </div>
+  </section>
+
+  <!-- لوحة الأبطال -->
+  <section class="screen" id="s-fame" hidden>
+    <div class="head" style="justify-content:center;text-align:center">
+      <div><h1>🏆 Hackers Hall of Fame</h1><p>أسرع اللي فتحوا الصندوق</p></div>
+    </div>
+    <ol class="fame" id="fame-list"></ol>
+    <div class="btn-row"><button class="btn" data-go="hack">جرّب تكسر الرقم ⚡</button><button class="btn btn-ghost" data-go="home">الرئيسية</button></div>
+  </section>
+
+  <!-- لوحة الفريق: تفتح بالضغط ٥ مرات على الشعار، أو Ctrl+Shift+S -->
+  <section class="screen" id="s-staff" hidden>
+    <div class="head"><div><h1>Staff Panel 🛠️</h1><p>إحصائيات البوث على هذا الجهاز.</p></div></div>
+    <div class="stats" id="stats"></div>
+    <div class="panel staff-sec">
+      <h3>🐞 تصويت الـ Bugs</h3>
+      <ul class="top-bugs" id="staff-bugs"></ul>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="export">⬇ تصدير النتائج (CSV)</button>
+      <button class="btn btn-ghost danger" id="reset">مسح كل البيانات</button>
+      <button class="btn btn-ghost" data-go="home">الرئيسية</button>
+    </div>
+  </section>
+</main>
+<canvas id="confetti"></canvas>
+
+<script src="app.js"></script>
+</body>
+</html>

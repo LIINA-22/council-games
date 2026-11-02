@@ -62,7 +62,9 @@ const PUZZLES = [
 ];
 
 // ===== التخزين على هذا الجهاز =====
-const KEY = "council-games-v1";
+// غيّر الرقم في آخر الاسم إذا تبي كل الأجهزة تبدأ من الصفر (تنمسح التجارب القديمة)
+const KEY = "council-games-v2";
+try { ["council-games-v1", "council-booth-v1"].forEach((k) => localStorage.removeItem(k)); } catch (_) {}
 const blank = () => ({ decoded: 0, decodeTries: 0, bugReports: 0, votes: {}, hackStarts: 0, hackWins: 0, fame: [] });
 let db;
 try { db = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (_) { db = blank(); }
@@ -376,5 +378,7 @@ function confetti(big) {
   })();
 }
 
-go("home");
+// رابط مباشر للوحة الفريق: أضف #staff في آخر الرابط
+go(location.hash === "#staff" ? "staff" : "home");
+window.addEventListener("hashchange", () => { if (location.hash === "#staff") go("staff"); });
 resetIdle();

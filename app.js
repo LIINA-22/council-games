@@ -365,24 +365,38 @@ $("type-form").addEventListener("submit", (e) => {
   e.preventDefault();
   typeName = $("type-name").value.trim().slice(0, 20) || "Anonymous";
   typeWords = 0; typeCorrect = 0; typeTotal = 0; typeStart = null;
-  $("type-time").textContent = TYPE_TIME + "s"; $("type-time").classList.remove("low");
+  $("type-time").classList.remove("low");
   $("type-score").textContent = "0 words";
   $("type-setup").hidden = true; $("type-play").hidden = false;
   nextSentence();
-  $("type-input").disabled = false;
-  setTimeout(() => $("type-input").focus(), 50);
+  $("type-input").disabled = true;
+  typeRunning = true;
+  // عد تنازلي ٣-٢-١، وبعدها يبدأ الوقت تلقائيًا
+  let n = 3;
+  $("type-time").textContent = "جاهز؟ " + n;
+  clearInterval(typeTimer);
+  typeTimer = setInterval(() => {
+    n--;
+    if (n > 0) { $("type-time").textContent = "جاهز؟ " + n; return; }
+    clearInterval(typeTimer);
+    startTypeClock();
+  }, 1000);
 });
+function startTypeClock() {
+  typeStart = Date.now();
+  $("type-time").textContent = TYPE_TIME + "s";
+  $("type-input").disabled = false;
+  $("type-input").focus();
+  typeTimer = setInterval(() => {
+    const left = Math.max(0, TYPE_TIME - Math.floor((Date.now() - typeStart) / 1000));
+    $("type-time").textContent = left + "s";
+    $("type-time").classList.toggle("low", left <= 5);
+    if (left === 0) endType();
+  }, 200);
+}
 $("type-input").addEventListener("input", () => {
+  if (!typeStart) return;
   const v = $("type-input").value;
-  if (!typeStart && v.length) {
-    typeStart = Date.now(); typeRunning = true;
-    typeTimer = setInterval(() => {
-      const left = Math.max(0, TYPE_TIME - Math.floor((Date.now() - typeStart) / 1000));
-      $("type-time").textContent = left + "s";
-      $("type-time").classList.toggle("low", left <= 5);
-      if (left === 0) endType();
-    }, 200);
-  }
   const spans = $("type-text").children;
   [...spans].forEach((sp, i) => {
     sp.className = i >= v.length ? "" : v[i] === typeSentence[i] ? "ok" : "bad";

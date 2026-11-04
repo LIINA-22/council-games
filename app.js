@@ -1,8 +1,8 @@
 // Council.exe — منطق الألعاب الثلاث. البيانات (الشفرات والمشاكل والألغاز) في أول الملف.
 // ===== البيانات =====
-// الشفرات سهلة عمدًا: ٣ طرق بس (حرف واحد لقدّام، كلمة معكوسة، أرقام الحروف)، ومعها مفتاح يحلها
+// الشفرات سهلة عمدًا: طريقتين بس (كلمة معكوسة، أرقام الحروف)، ومعها مفتاح يحلها
 const CARDS = [
-  { cipher: "NFEJB", method: "إزاحة حرف", hint: "كل حرف ارجعه حرف واحد ورا (B ← A)", key: "caesar", shift: 1, answer: "MEDIA",
+  { cipher: "AIDEM", method: "كلمة معكوسة", hint: "اقرأ الحروف من الآخر للأول", key: "reverse", answer: "MEDIA",
     role: "المسؤولة الإعلامية", who: "ردينا القحطاني",
     desc: "تدير حسابات المجلس وتنشر أخباره وفعالياته أول بأول. تابعنا على X: @CcsitCouncil" },
   { cipher: "STNEVE", method: "كلمة معكوسة", hint: "اقرأ الحروف من الآخر للأول", key: "reverse", answer: "EVENTS",
@@ -14,7 +14,7 @@ const CARDS = [
   { cipher: "REDAEL", method: "كلمة معكوسة", hint: "اقرأ الحروف من الآخر للأول", key: "reverse", answer: "LEADER",
     role: "رئيس المجلس الطلابي", who: "عزام الزهراني",
     desc: "يمثل طلاب الكلية أمام العمادة، ويقود فريق المجلس ويوصل صوت الطلاب." },
-  { cipher: "WJDF", method: "إزاحة حرف", hint: "كل حرف ارجعه حرف واحد ورا (B ← A)", key: "caesar", shift: 1, answer: "VICE",
+  { cipher: "22 - 9 - 3 - 5", method: "أرقام الحروف", hint: "كل رقم = ترتيب الحرف في الأبجدية (A=1)", key: "a1z26", answer: "VICE",
     role: "نائبة رئيس المجلس", who: "لينا المحرج",
     desc: "تساند الرئيس، وتتابع شغل أعضاء المجلس ومبادراته." },
   { cipher: "14 - 15 - 20 - 5 - 19", method: "أرقام الحروف", hint: "كل رقم = ترتيب الحرف في الأبجدية (A=1)", key: "a1z26", answer: "NOTES",
@@ -123,9 +123,6 @@ function initHome() {
 const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const MORSE = { A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.", G: "--.", H: "....", I: "..", J: ".---", K: "-.-", L: ".-..", M: "--", N: "-.", O: "---", P: ".--.", Q: "--.-", R: ".-.", S: "...", T: "-", U: "..-", V: "...-", W: ".--", X: "-..-", Y: "-.--", Z: "--.." };
 const KEYS = {
-  caesar: (k = 1) => `<p style="color:var(--muted);margin-bottom:8px">لقيت الحرف في الصف الأصفر؟ الحرف الأصلي تحته مباشرة.</p>
-    <div class="keytable cols-13">${ABC.slice(0, 13).map((c, i) => `<div class="k">${ABC[(i + k) % 26]}</div>`).join("")}${ABC.slice(0, 13).map((c) => `<div class="top-row">${c}</div>`).join("")}</div>
-    <div class="keytable cols-13" style="margin-top:6px">${ABC.slice(13).map((c, i) => `<div class="k">${ABC[(i + 13 + k) % 26]}</div>`).join("")}${ABC.slice(13).map((c) => `<div class="top-row">${c}</div>`).join("")}</div>`,
   reverse: () => `<p style="margin-bottom:10px">ما تحتاج جدول! بس اقرأ الكلمة من آخر حرف لأول حرف.</p>
     <div class="keytable cols-2" style="font-size:1.2rem;max-width:280px"><div><span class="k">TAC</span></div><div>← CAT</div><div><span class="k">GOD</span></div><div>← DOG</div></div>`,
   binary: () => `<div class="keytable cols-2">${ABC.map((c) => `<div><span class="k">${c}</span> = ${c.charCodeAt(0).toString(2).padStart(8, "0")}</div>`).join("")}</div>`,
@@ -142,7 +139,7 @@ function nextCard() {
   $("dec-cipher").classList.toggle("long", !!card.long);
   $("dec-method").textContent = card.method;
   $("dec-hint").textContent = card.hint;
-  $("dec-key").innerHTML = KEYS[card.key](card.shift);
+  $("dec-key").innerHTML = KEYS[card.key]();
   $("dec-input").value = "";
   $("dec-feedback").textContent = "";
   $("dec-play").hidden = false;
